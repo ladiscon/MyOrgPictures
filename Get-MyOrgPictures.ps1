@@ -25,7 +25,7 @@ param (
 	[int]$Columns
 	)
 
-Connect-MgGraph
+Connect-MgGraph | Out-Null
 
 Write-Progress -Activity "Finding people" -PercentComplete 0
 
@@ -34,7 +34,7 @@ $excludePeople = @{}
 
 foreach($person in $Includes)
 {
-	$personObject = Get-AzureADUser -SearchString $person
+    $personObject = Get-AzureADUser -SearchString $person
     if ($personObject -eq $null)
     {
         Write-Error "Unable to find person to include: $person"
@@ -46,7 +46,7 @@ foreach($person in $Includes)
         return
     }
 
-    $dummy = $todo.Enqueue($personObject)
+    $todo.Enqueue($personObject) | Out-Null
 }
 
 if ($Excludes -ne $null)
@@ -62,7 +62,7 @@ if ($Excludes -ne $null)
         }
         if ($personObject.Count -gt 1)
         {
-        Write-Error "Searching for '$person' matched multiple people. Try using UPN or e-mail address of the person instead."
+            Write-Error "Searching for '$person' matched multiple people. Try using UPN or e-mail address of the person instead."
             return
         }
 
@@ -103,15 +103,15 @@ while($todo.Count -gt 0)
             Filename = $(Join-Path $folder $($person.ObjectId + ".jpg"))
             ObjectId = $person.ObjectId
         }
-        $dummy = $people.Add($obj)
+        $people.Add($obj) | Out-Null
     }
 
-	$reports = Get-AzureADUserDirectReport -ObjectId $person.ObjectId -All $true
+    $reports = Get-AzureADUserDirectReport -ObjectId $person.ObjectId -All $true
     if ($reports -ne $null -and $reports.Length -gt 0)
     {
         foreach($report in $reports)
         {
-            $dummy = $todo.Enqueue($report)
+            $todo.Enqueue($report) | Out-Null
             $peopleFound++
         }
     }
@@ -127,12 +127,12 @@ $people =  $people | sort -Property Name
 # Get folder ready, this folder is reused over multiple runs of the command so it can cache people pictures
 if ($(Test-Path -Path $folder) -eq $False)
 {
-    New-Item -Type Directory -Path $folder
+    New-Item -Type Directory -Path $folder | Out-Null
 }
 
 foreach($person in $people)
 {
-	if ($(Test-Path -Path $person.FileName) -eq $False)
+	if ($(Test-Path -Path $person.FileName) -ne $True)
 	{
 		$result = Get-MgUserPhotoContent -PassThru -UserId $person.ObjectId -OutFile $person.FileName -ErrorAction:SilentlyContinue
 		if ($result -ne $null)
