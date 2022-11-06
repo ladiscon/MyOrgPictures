@@ -1,5 +1,8 @@
 # MyOrgPictures
-A tool for generating a slide with pictures of everyone who reports to me
+A tool for generating a slide with pictures of everyone who reports to a manager, direct or indirectly. Below is a sample of the slide generated.
+
+![slide with pictures](sample.jpg)
+
 
 ## Pre-requisites:
 
@@ -27,6 +30,7 @@ Type the following command and click yes to confirm:
 ```
 Install-Module Microsoft.Graph
 ```
+This will install several dependencies and it might take a few minutes to complete.
 
 ## Running the script:
 
@@ -50,10 +54,10 @@ $myLoginAccount = "ladiscon@microsoft.com"
 ```
 .\Get-MyOrgPictures.ps1 -Includes $listOfPeople
 ```
-Where **$listOfPeople** is a quoted, comma-separated list of aliases or email addresses of the manager and other people to retrieve the picture for. For example:
+Where **$listOfPeople** is a quoted, comma-separated list of email addresses of the manager and other people to retrieve the picture for. For example:
 
 ```
-$listOfPeople = "ladiscon","nirobson","tydakuja"
+$listOfPeople = "ladiscon@microsoft.com","nirobson@microsoft.com","tydakuja@microsoft.com"
 ```
 
 This will enumerate all direct reports recursively, download all pictures, and start PowerPoint and create slide with those pictures and names.
@@ -63,5 +67,5 @@ This will enumerate all direct reports recursively, download all pictures, and s
 In this example I have 3 aliases in the -Includes parameter, one is my own alias, and the two other are embedded engineers that work in my org.
 
 ```
-.\Get-MyOrgPictures.ps1 -Includes "ladiscon","nirobson","tydakuja"
+.\Get-MyOrgPictures.ps1 -Includes "ladiscon@microsoft.com","nirobson@microsoft.com","tydakuja@microsoft.com"
 ```
